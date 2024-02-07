@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="pl ">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Strona logowania</title>
+    <meta name="description" content="Strona logowania do serwisu głosowania online"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <meta name="author" content="Jakub Binda" />
+
+    <link rel="stylesheet" href="../static/style.css" type="text/css" />
+    <link href='http://fonts.googleapis.com/css?family=Lato&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
+  </head>
+
+
+  <body>
+    <header>
+      <div class="header">
+        <div class="powitanie"> 
+          <h1 class="panel_header"> Witaj w panelu Wyborcy! </h1>
+        </div>
+        <div class="przycisk_wyloguj">
+        <form action="/logout", method="POST">
+          <input type="submit" value="Wyloguj się" class="submit_button">
+        </form>
+        </div>
+      </div>
+    </header>
+
+
+    <article>
+        <div class='lista' id="dostepne_wyniki"> 
+            <h2> Dostępne wyniki: </h2>
+            <ul>
+              {% if dostepne_wyniki | length > 0 %}
+                {% for wynik in dostepne_wyniki %}
+                  <li>
+                    <strong> {{wynik.tytul}} </strong>
+                  </li>
+                {% endfor %}
+              {% else %}
+                  <li>
+                    <strong> Brak </strong>
+                  </li>
+              {% endif %}
+            </ul>
+        </div>
+
+
+        <div id="zobacz_wyniki">
+          <h2> Zobacz wyniki: </h2>
+          <form action="/zobacz_wyniki" method="POST">
+            <fieldset>
+              <legend> Zobacz wyniki </legend>
+              <div class="komisja_input_row">
+                <label for="id_wybory"> Wybory: </label>
+                <select id="id_wybory" name="id_wybory" class="input" required> 
+                  {% for rezultat in dostepne_wyniki %}
+                    <option value="{{rezultat.id | int}}">{{rezultat.tytul}}</option>
+                  {% endfor %}
+                </select>
+              </div>
+              <input type="hidden" name="login" class="input" value="{{login}}">
+              <div class="komisja_input_row">
+                <input type="submit" value="Zobacz wyniki" class="submit_button">
+              </div>
+            </fieldset>
+          </form>
+        </div>
+
+
+        <div id="trwajace_glosowania"> 
+            <h2> Trwające głosowania: </h2>
+            <ul>
+              {% if aktywne_wybory | length == 0 %}
+              <li> <strong> Brak </strong> </li>
+              {% else %}
+              {% for glosowanie in aktywne_wybory %}
+                <li>
+                  <strong> {{glosowanie.tytul}} </strong>
+                  <ul>
+                    <li>
+                      Początek głosowania: {{glosowanie.glosowanie_od}}
+                    </li>
+                    <li>
+                      Koniec głosowania: {{glosowanie.glosowanie_do}}
+                    </li>
+                    <li> 
+                      <strong> Kandydaci: </strong>
+                      {% if kandydaci_lista[loop.index0] | length > 0 %}
+                        {% for kandydat in kandydaci_lista[loop.index0] %}
+                        <ul>
+                          <li>{{kandydat[0]}} {{kandydat[1]}} </li>
+                        </ul>
+                        {% endfor %}
+                      {% else %}
+                      <ul>
+                        <li> <strong> Brak </strong> </li>
+                      </ul>
+                      {% endif %}
+                    </li>
+                  </ul>
+                </li>
+              {% endfor %}
+              {% endif %}
+            </ul>
+        </div>
+
+
+        <div id="oddaj_glos">
+            <h2> Oddaj głos: </h2>
+            <form action="/oddaj_glos" method="POST">
+              <fieldset>
+                <legend> Oddaj głos </legend>
+                <div class="komisja_input_row">
+                  
+                  <label for="login"> Twój login: </label>
+                  <input type="text" id="login" name="login" class="input" value="{{login}}" readonly required>
+    
+                  <label for="imie"> Imię: </label>
+                  <input type="text" id="imie" name="imie" class="input" placeholder="Imię Kandydata" required>
+    
+                  <label for="nazwisko"> Nazwisko: </label>
+                  <input type="text" id="nazwisko" name="nazwisko" class="input" placeholder="Nazwisko Kandydata" required>
+
+                  <label for="id_wybory"> Wybory: </label>
+                  <select id="id_wybory" name="id_wybory" class="input" required> 
+                    {% for glosowanie in aktywne_wybory %}
+                      <option value="{{glosowanie.id | int}}">{{glosowanie.tytul}}</option>
+                    {% endfor %}
+                  </select>
+                </div>
+                <div class="komisja_input_row">
+                  <input type="submit" value="Oddaj głos" class="submit_button">
+                </div>
+              </fieldset>
+            </form>
+          </div>
+
+
+        <div id="kandydatury"> 
+            <h2> Trwające przyjmowanie kandydatur: </h2>
+            <ul>
+              {% if aktywne_zgloszenia | length > 0%}
+              {% for glosowanie in aktywne_zgloszenia %}
+                <li>
+                  <strong> {{glosowanie.tytul}} </strong>
+                  <ul>
+                    <li>
+                      Rozpoczęcie zgłaszania kandydatów: {{glosowanie.zglaszanie_od}}
+                    </li>
+                    <li>
+                      Koniec zgłaszania kandydatów: {{glosowanie.zglaszanie_do}}
+                    </li>
+                  </ul>
+                </li>
+              {% endfor %}
+              {% else %}
+              <li> <strong> Brak </strong></li>
+              {% endif %}
+            </ul>
+
+        </div>
+
+
+        <div id="dodaj_kandydata">
+            <h2> Zgłoś kandydaturę: </h2>
+            <form action="/dodaj_kandydata" method="POST">
+              <fieldset>
+                <legend> Dodaj kandydata </legend>
+                <div class="komisja_input_row"> 
+    
+                  <label for="imie"> Imię Wyborcy: </label>
+                  <input type="text" id="imie" name="imie" class="input" required>
+    
+                  <label for="nazwisko"> Nazwisko Wyborcy: </label>
+                  <input type="text" id="nazwisko" name="nazwisko" class="input" required>
+
+                  <label for="id_wybory"> Wybory: </label>
+                  <select id="id_wybory" name="id_wybory" class="input" required> 
+                    {% for glosowanie in aktywne_zgloszenia %}
+                      <option value="{{glosowanie.id | int}}">{{glosowanie.tytul}}</option>
+                    {% endfor %}
+                  </select>
+                  <input type="hidden" name="login" class="input" value="{{login}}">
+                </div>
+                <div class="komisja_input_row">
+                  <input type="submit" value="Dodaj kandydata" class="submit_button">
+                </div>
+              </fieldset>
+            </form>
+          </div>
+    </article>
+
+  
+  </body>
+</html>

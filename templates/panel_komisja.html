@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="pl ">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Panel komisji</title>
+    <meta name="description" content="Panel przeznaczony dla komisji wyborczej."/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <meta name="author" content="Jakub Binda" />
+
+    <link rel="stylesheet" href="../static/style.css" type="text/css" />
+    <link href='http://fonts.googleapis.com/css?family=Lato&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
+  </head>
+
+  <body>
+    <div class="header">
+      <div class="powitanie"> 
+        <h1 class="panel_header"> Witaj w panelu Komisji! </h1>
+      </div>
+      <div class="przycisk_wyloguj">
+      <form action="/logout", method="POST">
+        <input type="submit" value="Wyloguj się" class="submit_button">
+      </form>
+      </div>
+    </div>
+  </header>
+
+    <article>
+      <div id="lista_wyborow">
+        <h2> Lista wyborów w toku: </h2>
+        <ul>
+          {% if ukryte_wyniki | length > 0 %}
+          {% for wyniki in ukryte_wyniki %}
+            <li>
+              <strong> {{wyniki.tytul}} </strong>
+              <ul>
+                <li>
+                  Początek zgłaszania kandydatów: {{wyniki.zglaszanie_od}}
+                </li>
+                <li>
+                  Koniec zgłaszania kandydatów: {{wyniki.zglaszanie_do}}
+                </li>
+                <li>
+                  Początek głosowania: {{wyniki.glosowanie_od}}
+                </li>
+                <li>
+                  Koniec głosowania: {{wyniki.glosowanie_do}}
+                </li>
+              </ul>
+            </li>
+          {% endfor %}
+          {% else %}
+          <li> <strong> Brak </strong> </li>
+          {% endif %}
+        </ul>
+      </div>
+
+
+      <div id="upublicznij_wyniki">
+        <form action="/ujawniono_wyniki" method="POST">
+          <fieldset>
+            <legend>Ujawnij wyniki wyborów</legend>
+            {% if ukryte_wyniki | length > 0%}
+            {% for wyniki in ukryte_wyniki %}
+              <div> <label> <input type="checkbox" name="tablica" value="{{wyniki.id}}"> {{wyniki.tytul}} </label></div>
+            {% endfor %}
+            <div class="komisja_input_row">
+              <input type="submit" value="Ujawnij wyniki" class="submit_button">
+            </div>
+            {% else %}
+            <strong> Brak wyników do upublicznienia. </strong>
+            {% endif %}
+          </fieldset>
+        </form>
+      </div>
+
+
+      <div id="dodaj_wybory">
+        <form action="/dodano_wybory" method="POST">
+          <fieldset>
+            <legend>Dodaj wybory</legend>
+            <div class="komisja_input_row"> 
+              <label for="tytul"> Tytuł: </label>
+              <input type="text" id="tytul" name="tytul" class="title_input" required>
+            </div>
+            <div class="komisja_input_row">
+              <label for="zgl_od"> Zgłaszanie od: </label>
+              <input type="datetime-local" id="zgl_od" name="zgl_od" class="input" required>
+
+              <label for="zgl_do"> Zgłaszanie do: </label>
+              <input type="datetime-local" id="zgl_do" name="zgl_do" class="input" required> 
+            
+              <label for="glo_od"> Głosowanie od: </label>
+              <input type="datetime-local" id="glo_od" name="glo_od" class="input" required> 
+
+              <label for="glo_do"> Głosowanie do: </label>
+              <input type="datetime-local" id="glo_do" name="glo_do" class="input" required>
+              
+              <label for="wyniki"> Wyniki publiczne: </label>
+              <select id="wyniki" name="wyniki" class="input" required>
+                <option>Widoczne</option>
+                <option selected>Niewidoczne</option>
+              </select> 
+            </div>
+            <div class="komisja_input_row">
+              <input type="submit" value="Dodaj wybory" class="submit_button">
+            </div>
+          </fieldset>
+          </form>
+      </div> 
+
+
+      <div id="dodaj_wyborce">
+        <form action="/dodano_wyborce" method="POST">
+          <fieldset>
+            <legend> Dodaj wyborcę </legend>
+            <div class="komisja_input_row"> 
+              <label for="login"> Login: </label>
+              <input type="text" id="login" name="login" class="input" required>
+
+              <label for="haslo"> Hasło: </label>
+              <input type="text" id="haslo" name="haslo" class="input" required>
+
+              <label for="imie"> Imię: </label>
+              <input type="text" id="imie" name="imie" class="input" required>
+
+              <label for="nazwisko"> Nazwisko: </label>
+              <input type="text" id="nazwisko" name="nazwisko" class="input" required> 
+            
+              <label for="rola"> Rola: </label>
+              <select id="rola" name="rola" class="input" required>
+                <option>Komisja</option>
+                <option selected>Wyborca</option>
+              </select>
+            </div>
+            <div class="komisja_input_row">
+              <input type="submit" value="Dodaj wyborcę" class="submit_button">
+            </div>
+          </fieldset>
+        </form>
+      </div>
+
+
+      <div id="lista_wyborow_do_archiwizacji">
+        <h2> Lista wyborów do archiwizacji: </h2>
+        <ul>
+          {% if do_archiwizacji | length > 0 %}
+          {% for wybory in do_archiwizacji %}
+            <li>
+              <strong> {{wybory.tytul}} </strong>
+              <ul>
+                <li>
+                  Zakończenie głosowania: {{wybory.glosowanie_do}}
+                </li>
+                <li>
+                  Wyniki upublicznione: {% if wybory.wyniki_widoczne %} upublicznione {% else %} nieupublicznione {% endif %}
+                </li>
+              </ul>
+            </li>
+          {% endfor %}
+          {% else %}
+          <li> <strong> Brak </strong> </li>
+          {% endif %}
+        </ul>
+      </div>
+
+
+      <div id="archiwizuj_wybory">
+        <form action="/zarchiwizowano_wybory" method="POST">
+          <fieldset>
+            <legend>Archiwizuj wybory</legend>
+            {% if do_archiwizacji | length > 0 %}
+            {% for wybory in do_archiwizacji %}
+              <div>
+                <label> <input type="checkbox" name="tablica" value="{{wybory.id}}"> {{wybory.tytul}} </label>
+              </div>
+            {% endfor %}
+            <div class="komisja_input_row">
+              <input type="submit" value="Archiwizuj wybory" class="submit_button">
+            </div>
+            {% else %}
+            <strong> Brak wyborów do archiwizacji. </strong>
+            {% endif %}
+          </fieldset>
+        </form>
+      </div>
+
+    </article>
+
+  </body>
+</html>

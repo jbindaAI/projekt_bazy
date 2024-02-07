@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="pl ">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Strona logowania</title>
+    <meta name="description" content="Strona logowania do serwisu głosowania online"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <meta name="author" content="Jakub Binda" />
+
+    <link rel="stylesheet" href="../static/style.css" type="text/css" />
+    <link href='http://fonts.googleapis.com/css?family=Lato&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
+  </head>
+
+  <body>
+    <header>
+      <div id="logo_MIMUW">
+        <img src="../static/MIM_logo_sygnet.jpg" width="150" height="120" alt="Logo MIM UW"/>
+      </div>
+    </header>
+
+    <article>
+      {% if message %}
+      <p class="message"> {{message | safe}}</p>
+      {% endif %}
+      <form action="/login" method="POST">
+        <fieldset>
+          <legend>Formularz logowania</legend>
+          <div class="login_row"> 
+            <label for="login"> Login: </label>
+            <input type="text" id="login" name="login" class="input" required> 
+          </div>
+
+          <div class="login_row"> 
+            <label for="haslo"> Hasło: </label> 
+            <input type="password" id="haslo" name="haslo" class="input" required> 
+          </div>
+          <div class="login_row">
+            <input type="submit" value="Zaloguj się" class="submit_button">
+          </div>
+      </fieldset>
+      </form>
+    </article>
+
+  
+  </body>
+</html>

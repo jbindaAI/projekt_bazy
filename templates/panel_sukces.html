@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="pl ">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Status zlecenia</title>
+    <meta name="description" content="Status Twojego zlecenia."/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <meta name="author" content="Jakub Binda" />
+
+    <link rel="stylesheet" href="../static/style.css" type="text/css" />
+    <link href='http://fonts.googleapis.com/css?family=Lato&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
+  </head>
+
+  <body>
+    <header>
+      <h1 class="panel_header"> Status zlecenia </h1>
+    </header>
+    <div> 
+        {% if message %}
+        <p class="message"> {{message | safe}}</p>
+        {% endif %}
+    </div>
+    <div id="powrot">
+        <form action="/panel" method="POST">
+            <input type="hidden" name="powrot" class="input" value="{% if powrot_komisja %}1{% else %}0{% endif %}">
+            <input type="hidden" name="login" class="input" value="{{login}}">
+            <div class="komisja_input_row">
+              <input type="submit" value="Wróć do panelu głównego" class="submit_button">
+            </div>
+        </form>
+      </div>
+    
